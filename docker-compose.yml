@@ -14,10 +14,18 @@ services:
     api:
         build: 
             context: . 
+            dockerfile: Dockerfile
         ports: 
             - "8000:8001" # left = host
         volumes: 
             - .:/code
         command: python manage.py runserver 0.0.0.0:8001
         depends_on:
+            - db
+    queue:
+        build: 
+            context: .
+            dockerfile: Dockerfile
+        command: "python consumer.py"
+        depends_on: 
             - db
