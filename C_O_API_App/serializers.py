@@ -1,8 +1,8 @@
 from rest_framework import serializers
-from .models import Indexes
+from .models import indexes
 
 class indexes_serializer(serializers.ModelSerializer):
     class Meta:
-        model = Indexes
+        model = indexes
         fields = "__all__"
 
