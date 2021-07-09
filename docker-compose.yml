@@ -29,3 +29,12 @@ services:
         command: "python consumer.py"
         depends_on: 
             - db
+            - api
+    producer:
+        build: 
+            context: .
+            dockerfile: Dockerfile
+        command: "python producer.py"
+        depends_on: 
+            - db
+            - api
