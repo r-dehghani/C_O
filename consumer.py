@@ -1,14 +1,18 @@
-import pika , json , os , psycopg2
+import pika , json , os , psycopg2 , time
 # import django
 # os.environ.setdefault("DJANGO_SETTINGS_MODULES" , "C_O_API_Project.settings")
 # django.setup()
 
 # from C_O_API_App.models import indexes
- 
-params = pika.URLParameters("amqps://qovczade:SltebwIvG3a5zJDbkYxKP7yHQQc8aPCf@fly.rmq.cloudamqp.com/qovczade")
-connection = pika.BlockingConnection(params)
+# time.sleep(119)
+# params = pika.URLParameters("amqps://qovczade:SltebwIvG3a5zJDbkYxKP7yHQQc8aPCf@fly.rmq.cloudamqp.com/qovczade")
+credentials = pika.PlainCredentials('guest', 'guest')
+# params = pika("amqp://guest:guest@rabbit//")
+parameters = pika.ConnectionParameters('rabbitmq', 5672 , '/' , credentials , heartbeat=60)
+# parameters = pika.ConnectionParameters(host='rabbitmq', port=5672, virtual_host='/')
+connection = pika.BlockingConnection(parameters)
 channel = connection.channel()
-channel.queue_declare(queue='hello')
+channel.queue_declare(queue='hello' , exclusive=True)
 
 def callback(ch, method, properties, body):
     print(" [x] Received ")

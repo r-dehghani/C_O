@@ -9,11 +9,15 @@ top =           ["1000" , "1200" , "1300" , "1400" , "1500" , "1600" , "1700" , 
 bottom =        ["900" , "1100" , "1200" , "1300" , "1400" , "1500" , "1600" , "1700" , "1800" , "1900" , "2000"]
 opening_price = ["950" , "1000" , "1100" , "1200" , "1300" , "1400" , "1500" , "1600" , "1700" , "1800" , "1900"]
 # data = list()
-
+# time.sleep(120)
 # for i in range(0,9):
 
-params = pika.URLParameters("amqps://qovczade:SltebwIvG3a5zJDbkYxKP7yHQQc8aPCf@fly.rmq.cloudamqp.com/qovczade")
-connection = pika.BlockingConnection(params)
+# params = pika.URLParameters("amqp://guest:guest@rabbitmq/5672")
+# parameters = pika.ConnectionParameters(host='rabbitmq', port=5672, virtual_host='/')
+credentials = pika.PlainCredentials('guest', 'guest')
+# params = pika("amqp://guest:guest@rabbit//")
+parameters = pika.ConnectionParameters('rabbitmq', 5672 , '/' , credentials , heartbeat=60)
+connection = pika.BlockingConnection(parameters)
 channel = connection.channel()
 
 

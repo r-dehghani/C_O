@@ -22,19 +22,35 @@ services:
         command: python manage.py runserver 0.0.0.0:8001
         depends_on:
             - db
-    queue:
+    consumer:
         build: 
             context: .
             dockerfile: Dockerfile
+        restart: always
         command: "python consumer.py"
         depends_on: 
             - db
             - api
+            - rabbitmq
     producer:
         build: 
             context: .
             dockerfile: Dockerfile
+        restart: always
         command: "python producer.py"
+        depends_on: 
+            - db
+            - api
+            - rabbitmq
+    rabbitmq:
+        image: rabbitmq:3.8-management
+        hostname: rabbitmq
+        restart: always
+        volumes:
+            - ./data/rabbitmq:/var/lib/rabbitmq
+        ports: 
+            - "15672:15672"
+            - "5672:5672"
         depends_on: 
             - db
             - api
