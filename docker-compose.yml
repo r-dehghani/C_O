@@ -1,10 +1,10 @@
-version: "3.9"
+version: "3"
 
 services: 
     db:
         image: postgres
         volumes:
-            - ./data/db:/var/lib/postgresql/data
+            - ../database_C_O/data/db:/var/lib/postgresql/data
         environment:
             - POSTGRES_DB=postgres
             - POSTGRES_USER=postgres
@@ -24,7 +24,7 @@ services:
             - db
     consumer:
         build: 
-            context: .
+            context: './TSE_raw_data_consumer'
             dockerfile: Dockerfile
         restart: always
         command: "python consumer.py"
@@ -34,7 +34,7 @@ services:
             - rabbitmq
     producer:
         build: 
-            context: .
+            context: "./TSE_data_producer"
             dockerfile: Dockerfile
         restart: always
         command: "python producer.py"
@@ -47,7 +47,7 @@ services:
         hostname: rabbitmq
         restart: always
         volumes:
-            - ./data/rabbitmq:/var/lib/rabbitmq
+            - ../database_C_O/data/rabbitmq:/var/lib/rabbitmq
         ports: 
             - "15672:15672"
             - "5672:5672"
