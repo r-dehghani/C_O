@@ -54,3 +54,13 @@ services:
         depends_on: 
             - db
             - api
+    trigger:
+        build: 
+            context: "./Trigger"
+            dockerfile: Dockerfile
+        restart: always
+        command: "python trigger.py"
+        depends_on: 
+            - db
+            - rabbitmq
+            - api
