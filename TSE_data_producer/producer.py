@@ -28,7 +28,7 @@ while True:
     rand_num = random.randint(0, len(top)-1)
     x = {'symbolisin': symbol[random.randint(0 ,len(symbol)-1)], 'variation': variation[rand_num], 'top': top[rand_num], 'bottom': bottom[rand_num], 'opening_price': opening_price[rand_num]} 
     print(f"the data is : {x}")
-    time.sleep(5.0)
+    time.sleep(3.0)
     publish("adding_live_data", x)
 
 

@@ -10,3 +10,12 @@ class indexes(models.Model):
 
     def __str__(self):
         return self.symbolisin
+
+
+class trigger(models.Model):
+    user_symbol = models.CharField(max_length = 20)
+    oper = models.IntegerField()
+    desired_price = models.IntegerField()
+
+    def __str__(self):
+        return self.user_symbol
