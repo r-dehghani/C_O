@@ -1,6 +1,5 @@
-import psycopg2
-import pika 
-import sys , json
+import psycopg2 , pika , json
+
 from enum import Enum # this is for enumeration
 # from sys import argv
 # scrips , symbolisin , order_price , operator = argv
@@ -12,27 +11,6 @@ class operator(Enum):
     less = 4
 # ======================================================================
 
-# con = psycopg2.connect(host='db', port="5432" , user="postgres" ,password ="dariush", database="postgres")
-# cursor = con.cursor()
-
-# SELECT_QUERY = """ SELECT * FROM "C_O_API_App_trigger" ORDER BY id DESC LIMIT 1; """
-# cursor.execute(SELECT_QUERY)
-# row = cursor.fetchone()
-# con.commit()
-
-# DELETE_QUERY = """ DELETE FROM "C_O_API_App_trigger"; """
-# cursor.execute(DELETE_QUERY)
-# con.commit()
-
-# cursor.close()
-# =======================================================================
-# class trigger_definition():
-
-#     user_symbol = row[0]
-#     oper = row[1]
-#     desired_price = row[2]
-
-# ======================================================================
 
 credentials = pika.PlainCredentials('guest', 'guest')
 parameters = pika.ConnectionParameters('rabbitmq', 5672 , '/' , credentials , heartbeat=60)
@@ -48,63 +26,115 @@ def read_triggers():
 
     SELECT_QUERY = """ SELECT * FROM "C_O_API_App_trigger" ORDER BY id DESC ; """
     cursor.execute(SELECT_QUERY)
-    rows = cursor.fetchall()
-    # print(row[0] , type(row[1]))
-    # print(row[1] , type(row[2]))
-    # print(row[2] , type(row[3]))
+    rows = cursor.fetchall() #[(...),(...)] return a list of tuples
+    # print(row[1] , type(row[1]))
+    # print(row[2] , type(row[2]))
+    # print(row[3] , type(row[3]))
     con.commit()    
     cursor.close()
-    print(rows)
+    print(f"rows is :{rows}")
     return rows 
 
 triggers_all = read_triggers()
+keys = list()
 
+# for item in triggers_all :
+
+#     keys.append(item[])
+        
+print(f"this is triggers_all : {triggers_all}")
 list1 = list()
 def callback(ch, method, properties, body):
-
-
-
     print(" [x] Received ")
-  
     data = json.loads(body)
     print("the flowting data : ")
-    symbolisin = data["symbolisin"]
-    triggers = list(triggers_all)
-    for record in triggers_all :
-        if record[1] == symbolisin :
-            list1.append(record)
     print(data)
-    for row in list1:
-        if row != None:
-            
+    symbolisin = data["symbolisin"]
+    # triggers = list(triggers_all)
+    for record in triggers_all :
+        if record != None:
+            # if record[1] == symbolisin :
+                # list1.append(record)
+    # for row in list1:
             print("trigger data  exists!")
 
+            if record[1] == data["symbolisin"]:
+                if record[2] == int(operator.equal.value) :
+                    if record[4] == 'asking_price': # it is Asking_price
+                        if record[3] == int(data['asking_price']):
+                            print(f"the {data['symbolisin']} stock is bught in equal and asking_price!!!")
+                            # del trigger_definition1
+                            print(f"record before del is : {record}")
+                            del record
+                            
+                    elif record[4] == 'biding_price': # it is biding_price
+                        if record[3] == int(data['biding_price']):
+                            print(f"the {data['symbolisin']} stock is bught in equal and biding_price!!!")
+                            print(f"record before del is : {record}")
+                            del record
+                            
 
-            if row[1] == data["symbolisin"]:
-                if row[2] == int(operator.equal.value) :
-                    if row[3] == int(data['top']):
-                        print(f"the {data['symbolisin']} stock is bught in equal!!!")
+                elif record[2] == int(operator.greater_or_equal.value) :
+                    if record[4] == 'asking_price': # it is Asking_price
+                        if record[3] >= int(data['asking_price']):
+                            print(f"the {data['symbolisin']} stock is bught in greater_or_equal and asking_price!!!")
+                            # del trigger_definition1
+                            print(f"record before del is : {record}")
+                            del record
+                            
+                    elif record[4] == 'biding_price': # it is biding_price
+                        if record[3] == int(data['biding_price']):
+                            print(f"the {data['symbolisin']} stock is bught in greater_or_equal and biding_price!!!")
                         # del trigger_definition1
-                        
-                elif row[2] == int(operator.greater_or_equal.value) :
-                    if row[3] >= int(data['top']):
-                        print(f"the {data['symbolisin']} stock is bught in greater_or_equal!!!")
+                            print(f"record before del is : {record}")
+                            del record
+                            
+
+                elif record[2] == int(operator.less_or_equal.value) :
+                    if record[4] == 'asking_price': # it is Asking_price
+                        if record[3] <= int(data['asking_price']):
+                            print(f"the {data['symbolisin']} stock is bught in less_or_equal and asking_price!!!")
                         # del trigger_definition1
+                            print(f"record before del is : {record}")
+                            del record
+                            
+                    elif record[4] == 'biding_price': # it is biding_price
+                        if record[3] <= int(data['biding_price']):
+                            print(f"the {data['symbolisin']} stock is bught in less_or_equal and biding_price!!!")
+                            print(f"record before del is : {record}")
+                            del record
+                            
+
+                elif record[2] == int(operator.greater.value) :
+                    if record[4] == 'asking_price': # it is Asking_price
+                        if record[3] > int(data['asking_price']):
+                            print(f"the {data['symbolisin']} stock is bught in greater and asking_price!!!")
+                            # del trigger_definition1
+                            print(f"record before del is : {record}")
+                            del record
+                            
+                    elif record[4] == 'biding_price': # it is biding_price
+                        if record[3] > int(data['biding_price']):
+                            print(f"the {data['symbolisin']} stock is bught in greater and biding_price!!!")
+                            print(f"record before del is : {record}")
+                            del record
+                            
+
+                elif record[2] == int(operator.less.value) :
+                    if record[4] == 'asking_price': # it is Asking_price
+                        if record[3] < int(data['asking_price']):
+                            print(f"the {data['symbolisin']} stock is bught in less and asking_price!!!")
+                            # del trigger_definition1
+                            print(f"record before del is : {record}")
+                            del record
+                            
+                    elif record[4] == 'biding_price': # it is biding_price
+                        if record[3] < int(data['biding_price']):
+                            print(f"the {data['symbolisin']} stock is bught in less and biding_price!!!")
+                            print(f"record before del is : {record}")
+                            del record
+                            
             
-                elif row[2] == int(operator.less_or_equal.value) :
-                    if row[3] <= int(data['top']):
-                        print(f"the {data['symbolisin']} stock is bught in less_or_equal!!!")
-                        # del trigger_definition1
-            
-                elif row[2] == int(operator.greater.value) :
-                    if row[3] > int(data['top']):
-                        print(f"the {data['symbolisin']} stock is bught in greater!!!")
-                        # del trigger_definition1
-            
-                elif row[2] == int(operator.less.value) :
-                    if row[3]< int(data['top']):
-                        print(f"the {data['symbolisin']} stock is bught in less!!!")
-                        # del trigger_definition1
                 else:
                     print("something is wrong...")
             else: 
@@ -113,38 +143,7 @@ def callback(ch, method, properties, body):
             print("there is no trigger!!! ")
 
 
-        # if trigger_definition1.user_symbol == data["symbolisin"]:
-
-    #         if trigger_definition1.oper == int(operator.equal.value) :
-    #             if trigger_definition1.desired_price == int(data['top']):
-    #                 print(f"the {data['symbolisin']} stock is bught in equal!!!")
-    #                 del trigger_definition1
-                    
-    #         elif trigger_definition1.oper == int(operator.greater_or_equal.value) :
-    #             if trigger_definition1.desired_price >= int(data['top']):
-    #                 print(f"the {data['symbolisin']} stock is bught in greater_or_equal!!!")
-    #                 del trigger_definition1
-        
-    #         elif trigger_definition1.oper == int(operator.less_or_equal.value) :
-    #             if trigger_definition1.desired_price <= int(data['top']):
-    #                 print(f"the {data['symbolisin']} stock is bught in less_or_equal!!!")
-    #                 del trigger_definition1
-        
-    #         elif trigger_definition1.oper == int(operator.greater.value) :
-    #             if trigger_definition1.desired_price > int(data['top']):
-    #                 print(f"the {data['symbolisin']} stock is bught in greater!!!")
-    #                 del trigger_definition1
-        
-    #         elif trigger_definition1.oper == int(operator.less.value) :
-    #             if trigger_definition1.desired_price < int(data['top']):
-    #                 print(f"the {data['symbolisin']} stock is bught in less!!!")
-    #                 del trigger_definition1
-    #         else:
-    #             print("something is wrong...")
-    #     else: 
-    #         print("this stock is not matter! :| ")
-    # else:
-    #     print("there is no trigger!!! ")
+ 
 
 channel.basic_consume(queue='hello2', on_message_callback=callback, auto_ack=True) 
 print(' [*] start consuming in Trigger service. To exit press CTRL+C')

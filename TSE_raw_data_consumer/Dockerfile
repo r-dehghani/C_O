@@ -1,11 +1,11 @@
-FROM python:3
+FROM python:3.9-slim-buster
 
 ENV PYTHONUNBUFFERED 1
 
-RUN mkdir /code
+RUN mkdir /tse_cosumer
 
-WORKDIR /code
+WORKDIR /tse_cosumer
 
-COPY . /code/
+COPY . /tse_cosumer/
 
 RUN pip install -r requirements.txt

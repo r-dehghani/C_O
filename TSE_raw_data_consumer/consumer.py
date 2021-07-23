@@ -1,4 +1,4 @@
-import pika , json , os , psycopg2 , time
+import pika , json , psycopg2 
 
 credentials = pika.PlainCredentials('guest', 'guest')
 parameters = pika.ConnectionParameters('rabbitmq', 5672 , '/' , credentials , heartbeat=60)
@@ -20,9 +20,9 @@ def callback(ch, method, properties, body):
 
     INSERT_QUERY = """
     INSERT INTO "C_O_API_App_indexes" 
-        ("symbolisin", "variation", "top", "bottom" , "opening_price") VALUES (%s,%s,%s,%s,%s);"""
+        ("symbolisin", "yesterday_variation", "asking_price", "biding_price" , "opening_price") VALUES (%s,%s,%s,%s,%s);"""
     
-    cursor.execute(INSERT_QUERY, (f'{data["symbolisin"]}',f'{data["variation"]}',f'{data["top"]}',f'{data["bottom"]}',f'{data["opening_price"]}'))
+    cursor.execute(INSERT_QUERY, (f'{data["symbolisin"]}',f'{data["yesterday_variation"]}',f'{data["asking_price"]}',f'{data["biding_price"]}',f'{data["opening_price"]}'))
     con.commit()
     cursor.close()
     con.close()

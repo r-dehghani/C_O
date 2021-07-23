@@ -2,7 +2,7 @@ version: "3"
 
 services: 
     db:
-        image: postgres
+        image: postgres:13-buster
         volumes:
             - ../database_C_O/data/db:/var/lib/postgresql/data
         environment:

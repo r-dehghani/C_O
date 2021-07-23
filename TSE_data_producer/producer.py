@@ -1,9 +1,6 @@
-import pika , json
-import time
-import random
-import time
+import pika , json , time , random
 
-symbol = ["khafula", "fameli", "shepeli", "zoub"]
+symbol = ["khafula", "fameli", "shepeli", "zoub" , "shasta"]
 variation = ["-5", "-4", "-3", "-2", "-1", "0", "1", "2", "3", "4", "5"]
 top =           ["1000" , "1200" , "1300" , "1400" , "1500" , "1600" , "1700" , "1800" , "1900" , "2000", "2100"]
 bottom =        ["900" , "1100" , "1200" , "1300" , "1400" , "1500" , "1600" , "1700" , "1800" , "1900" , "2000"]
@@ -26,7 +23,7 @@ def publish(method , body):
 
 while True:
     rand_num = random.randint(0, len(top)-1)
-    x = {'symbolisin': symbol[random.randint(0 ,len(symbol)-1)], 'variation': variation[rand_num], 'top': top[rand_num], 'bottom': bottom[rand_num], 'opening_price': opening_price[rand_num]} 
+    x = {'symbolisin': symbol[random.randint(0 ,len(symbol)-1)], 'yesterday_variation': variation[rand_num], 'asking_price': top[rand_num], 'biding_price': bottom[rand_num], 'opening_price': opening_price[rand_num]} 
     print(f"the data is : {x}")
     time.sleep(3.0)
     publish("adding_live_data", x)
