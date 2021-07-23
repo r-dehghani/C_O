@@ -27,50 +27,63 @@ def read_triggers():
     SELECT_QUERY = """ SELECT * FROM "C_O_API_App_trigger" ORDER BY id DESC ; """
     cursor.execute(SELECT_QUERY)
     rows = cursor.fetchall() #[(...),(...)] return a list of tuples
-    # print(row[1] , type(row[1]))
-    # print(row[2] , type(row[2]))
-    # print(row[3] , type(row[3]))
+
     con.commit()    
     cursor.close()
-    print(f"rows is :{rows}")
+    print(f"this is all available triggers :{rows}")
     return rows 
 
-triggers_all = read_triggers()
-keys = list()
 
-# for item in triggers_all :
+def delete_trigger(record_id):
+    try :
 
-#     keys.append(item[])
+        con = psycopg2.connect(host='db', port="5432" , user="postgres" ,password ="dariush", database="postgres")
+        cursor = con.cursor()
+
+        DELETE_QUERY = f""" DELETE FROM "C_O_API_App_trigger" WHERE ID = {record_id} ; """
+        cursor.execute(DELETE_QUERY)
         
-print(f"this is triggers_all : {triggers_all}")
-list1 = list()
+        con.commit()
+        print("Deleting trigger from database succeeded...")    
+        cursor.close()
+    except :
+        connection.rollback()
+        print("Deleting trigger from database failed...")
+ 
+
+
+
+
+
+        
+# print(f"this is all available triggers : {triggers_all}")
+# list1 = list()
 def callback(ch, method, properties, body):
     print(" [x] Received ")
     data = json.loads(body)
     print("the flowting data : ")
     print(data)
     symbolisin = data["symbolisin"]
-    # triggers = list(triggers_all)
+    triggers_all = read_triggers()
     for record in triggers_all :
         if record != None:
-            # if record[1] == symbolisin :
-                # list1.append(record)
-    # for row in list1:
-            print("trigger data  exists!")
+            
+            # print("trigger data  exists!")
 
             if record[1] == data["symbolisin"]:
                 if record[2] == int(operator.equal.value) :
                     if record[4] == 'asking_price': # it is Asking_price
                         if record[3] == int(data['asking_price']):
                             print(f"the {data['symbolisin']} stock is bught in equal and asking_price!!!")
-                            # del trigger_definition1
-                            print(f"record before del is : {record}")
+                            
+                            delete_trigger(record[0])
                             del record
                             
                     elif record[4] == 'biding_price': # it is biding_price
                         if record[3] == int(data['biding_price']):
                             print(f"the {data['symbolisin']} stock is bught in equal and biding_price!!!")
-                            print(f"record before del is : {record}")
+                            
+                            delete_trigger(record[0])
                             del record
                             
 
@@ -78,46 +91,53 @@ def callback(ch, method, properties, body):
                     if record[4] == 'asking_price': # it is Asking_price
                         if record[3] >= int(data['asking_price']):
                             print(f"the {data['symbolisin']} stock is bught in greater_or_equal and asking_price!!!")
-                            # del trigger_definition1
-                            print(f"record before del is : {record}")
+                            
+                            delete_trigger(record[0])
                             del record
                             
+                            
                     elif record[4] == 'biding_price': # it is biding_price
-                        if record[3] == int(data['biding_price']):
+                        if record[3] >= int(data['biding_price']):
                             print(f"the {data['symbolisin']} stock is bught in greater_or_equal and biding_price!!!")
-                        # del trigger_definition1
-                            print(f"record before del is : {record}")
+                       
+                            delete_trigger(record[0])
                             del record
+                            
                             
 
                 elif record[2] == int(operator.less_or_equal.value) :
                     if record[4] == 'asking_price': # it is Asking_price
                         if record[3] <= int(data['asking_price']):
                             print(f"the {data['symbolisin']} stock is bught in less_or_equal and asking_price!!!")
-                        # del trigger_definition1
-                            print(f"record before del is : {record}")
+                        
+                            delete_trigger(record[0])
                             del record
+                            
                             
                     elif record[4] == 'biding_price': # it is biding_price
                         if record[3] <= int(data['biding_price']):
                             print(f"the {data['symbolisin']} stock is bught in less_or_equal and biding_price!!!")
-                            print(f"record before del is : {record}")
+                            
+                            delete_trigger(record[0])
                             del record
+                            
                             
 
                 elif record[2] == int(operator.greater.value) :
                     if record[4] == 'asking_price': # it is Asking_price
                         if record[3] > int(data['asking_price']):
                             print(f"the {data['symbolisin']} stock is bught in greater and asking_price!!!")
-                            # del trigger_definition1
-                            print(f"record before del is : {record}")
+                           
+                            delete_trigger(record[0])
                             del record
+                            
                             
                     elif record[4] == 'biding_price': # it is biding_price
                         if record[3] > int(data['biding_price']):
                             print(f"the {data['symbolisin']} stock is bught in greater and biding_price!!!")
-                            print(f"record before del is : {record}")
+                            delete_trigger(record[0])
                             del record
+                            
                             
 
                 elif record[2] == int(operator.less.value) :
@@ -125,14 +145,16 @@ def callback(ch, method, properties, body):
                         if record[3] < int(data['asking_price']):
                             print(f"the {data['symbolisin']} stock is bught in less and asking_price!!!")
                             # del trigger_definition1
-                            print(f"record before del is : {record}")
+                            delete_trigger(record[0])
                             del record
+                            
                             
                     elif record[4] == 'biding_price': # it is biding_price
                         if record[3] < int(data['biding_price']):
                             print(f"the {data['symbolisin']} stock is bught in less and biding_price!!!")
-                            print(f"record before del is : {record}")
+                            delete_trigger(record[0])
                             del record
+                            
                             
             
                 else:
