@@ -17,6 +17,7 @@ class trigger(models.Model):
     oper = models.IntegerField()
     desired_price = models.IntegerField()
     right_operand = models.CharField(max_length = 20)
+    is_fired = models.BooleanField(default=True)
 
     def __str__(self):
         return self.user_symbol

@@ -42,7 +42,3 @@ class browse_symbol(APIView):
         # trigger1.desired_price = desired_price
         # trigger1.save()
         return Response(serializers.data , status = status.HTTP_201_CREATED)
-
-        
-        
-   

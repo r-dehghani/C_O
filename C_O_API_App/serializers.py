@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import indexes , trigger
+from .models import indexes , trigger , make_deal
 
 class indexes_serializer(serializers.ModelSerializer):
     class Meta:
