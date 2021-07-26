@@ -1,5 +1,5 @@
 import psycopg2 , pika , json
-
+import smtplib 
 from enum import Enum # this is for enumeration
 # from sys import argv
 # scrips , symbolisin , order_price , operator = argv
@@ -10,6 +10,16 @@ class operator(Enum):
     greater = 3
     less = 4
 # ======================================================================
+
+sender_email = "r.dehghani.68@gmail.com"
+receiver_email = "r.dehghani.90@gmail.com"
+password = "Password-68_"
+
+
+server = smtplib.SMTP('smtp.gmail.com' , 587 )
+server.starttls()
+server.login(sender_email , password)
+print("login to email service success")
 
 
 credentials = pika.PlainCredentials('guest', 'guest')
@@ -97,6 +107,9 @@ def callback(ch, method, properties, body):
                         if record[3] == int(data['asking_price']):
                             print(f"the {data['symbolisin']} stock is bught in equal and asking_price!!!")
                             record[4] = False
+                            message = f"Hey there! your desired stock {record[1]} is bought !"
+                            server.sendmail(sender_email , receiver_email , message)
+                            print("email has been sent to the receiver email !!")
                             update_trigger(record[0])
                             del record
                             
@@ -105,6 +118,9 @@ def callback(ch, method, properties, body):
                         if record[3] == int(data['biding_price']):
                             print(f"the {data['symbolisin']} stock is bught in equal and biding_price!!!")
                             record[4] = False
+                            message = f"Hey there! your desired stock {record[1]} is bought !"
+                            server.sendmail(sender_email , receiver_email , message)
+                            print("email has been sent to the receiver email !!")
                             update_trigger(record[0])
                             del record
                             
@@ -114,6 +130,9 @@ def callback(ch, method, properties, body):
                         if record[3] >= int(data['asking_price']):
                             print(f"the {data['symbolisin']} stock is bught in greater_or_equal and asking_price!!!")
                             record[4] = False
+                            message = f"Hey there! your desired stock {record[1]} is bought !"
+                            server.sendmail(sender_email , receiver_email , message)
+                            print("email has been sent to the receiver email !!")
                             update_trigger(record[0])
                             del record
                             
@@ -122,6 +141,9 @@ def callback(ch, method, properties, body):
                         if record[3] >= int(data['biding_price']):
                             print(f"the {data['symbolisin']} stock is bught in greater_or_equal and biding_price!!!")
                             record[4] = False
+                            message = f"Hey there! your desired stock {record[1]} is bought !"
+                            server.sendmail(sender_email , receiver_email , message)
+                            print("email has been sent to the receiver email !!")
                             update_trigger(record[0])
                             del record
                             
@@ -132,6 +154,9 @@ def callback(ch, method, properties, body):
                         if record[3] <= int(data['asking_price']):
                             print(f"the {data['symbolisin']} stock is bught in less_or_equal and asking_price!!!")
                             record[4] = False
+                            message = f"Hey there! your desired stock {record[1]} is bought !"
+                            server.sendmail(sender_email , receiver_email , message)
+                            print("email has been sent to the receiver email !!")
                             update_trigger(record[0])
                             del record
                             
@@ -140,6 +165,9 @@ def callback(ch, method, properties, body):
                         if record[3] <= int(data['biding_price']):
                             print(f"the {data['symbolisin']} stock is bught in less_or_equal and biding_price!!!")
                             record[4] = False
+                            message = f"Hey there! your desired stock {record[1]} is bought !"
+                            server.sendmail(sender_email , receiver_email , message)
+                            print("email has been sent to the receiver email !!")
                             update_trigger(record[0])
                             del record
                             
@@ -150,6 +178,9 @@ def callback(ch, method, properties, body):
                         if record[3] > int(data['asking_price']):
                             print(f"the {data['symbolisin']} stock is bught in greater and asking_price!!!")
                             record[4] = False
+                            message = f"Hey there! your desired stock {record[1]} is bought !"
+                            server.sendmail(sender_email , receiver_email , message)
+                            print("email has been sent to the receiver email !!")
                             update_trigger(record[0])
                             del record
                             
@@ -158,6 +189,9 @@ def callback(ch, method, properties, body):
                         if record[3] > int(data['biding_price']):
                             print(f"the {data['symbolisin']} stock is bught in greater and biding_price!!!")
                             record[4] = False
+                            message = f"Hey there! your desired stock {record[1]} is bought !"
+                            server.sendmail(sender_email , receiver_email , message)
+                            print("email has been sent to the receiver email !!")
                             update_trigger(record[0])
                             del record
                             
@@ -170,6 +204,9 @@ def callback(ch, method, properties, body):
                             # del trigger_definition1
                             update_trigger(record[0])
                             record[4] = False
+                            message = f"Hey there! your desired stock {record[1]} is bought !"
+                            server.sendmail(sender_email , receiver_email , message)
+                            print("email has been sent to the receiver email !!")
                             del record
                             
                             
@@ -178,6 +215,9 @@ def callback(ch, method, properties, body):
                             print(f"the {data['symbolisin']} stock is bught in less and biding_price!!!")
                             update_trigger(record[0])
                             record[4] = False
+                            message = f"Hey there! your desired stock {record[1]} is bought !"
+                            server.sendmail(sender_email , receiver_email , message)
+                            print("email has been sent to the receiver email !!")
                             del record
                             
                             
