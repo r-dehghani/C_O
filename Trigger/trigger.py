@@ -1,5 +1,6 @@
 import psycopg2 , pika , json
 import smtplib 
+# from . import sending_email
 from enum import Enum # this is for enumeration
 # from sys import argv
 # scrips , symbolisin , order_price , operator = argv
@@ -10,7 +11,7 @@ class operator(Enum):
     greater = 3
     less = 4
 # ======================================================================
-
+'''
 sender_email = "r.dehghani.68@gmail.com"
 receiver_email = "r.dehghani.90@gmail.com"
 password = "Password-68_"
@@ -20,7 +21,7 @@ server = smtplib.SMTP('smtp.gmail.com' , 587 )
 server.starttls()
 server.login(sender_email , password)
 print("login to email service success")
-
+'''
 
 credentials = pika.PlainCredentials('guest', 'guest')
 parameters = pika.ConnectionParameters('rabbitmq', 5672 , '/' , credentials , heartbeat=60)
@@ -29,22 +30,18 @@ channel = connection.channel()
 channel.exchange_declare(exchange='logs', exchange_type='fanout')
 channel.queue_declare(queue='hello2' , exclusive=True)
 channel.queue_bind(exchange='logs', queue="hello2")
+# =========================================================
 
-# def delete_trigger(record_id):
-#     try :
 
-#         con = psycopg2.connect(host='db', port="5432" , user="postgres" ,password ="dariush", database="postgres")
-#         cursor = con.cursor()
 
-#         DELETE_QUERY = f""" DELETE FROM "C_O_API_App_trigger" WHERE ID = {record_id} ; """
-#         cursor.execute(DELETE_QUERY)
-        
-#         con.commit()
-#         print("Deleting trigger from database succeeded...")    
-#         cursor.close()
-#     except :
-#         connection.rollback()
-#         print("Deleting trigger from database failed...")
+channel_email = connection.channel()
+channel_email.exchange_declare(exchange='another_exchange', exchange_type='fanout')
+def publish(method , body):
+    properties = pika.BasicProperties(method)
+    # use publish to estabilish body. exchange is just saying that which queue has this routing key. i wanna send this body to it
+    channel.basic_publish(exchange='another_exchange', routing_key='' , body = json.dumps(body) , properties= properties)  
+    print("published message ^_^")
+
 
 def read_triggers():
     con = psycopg2.connect(host='db', port="5432" , user="postgres" ,password ="dariush", database="postgres")
@@ -80,11 +77,18 @@ def update_trigger(record_id):
 
 
 
+def run_action(record , data):
+    sample_of_operator = operator(record[2]).value
+    record[4] = False
+    print(f"the {data['symbolisin']} stock is bught!!")
+    
+    print("email has been sent to the receiver email !!")
+    update_trigger(record[0])
+    del record
+                            
+bole_f = False
 
 
-        
-# print(f"this is all available triggers : {triggers_all}")
-# list1 = list()
 def callback(ch, method, properties, body):
     print(" [x] Received ")
     data = json.loads(body)
@@ -97,137 +101,47 @@ def callback(ch, method, properties, body):
         list_tuple.append(list(tuples))
 
     for record in list_tuple :
+        bole_f = False
         if record[4] == True:
             
-            # print("trigger data  exists!")
-
             if record[1] == data["symbolisin"]:
+                value = int(data[record[5]])
                 if record[2] == int(operator.equal.value) :
-                    if record[5] == 'asking_price': # it is Asking_price
-                        if record[3] == int(data['asking_price']):
-                            print(f"the {data['symbolisin']} stock is bught in equal and asking_price!!!")
-                            record[4] = False
-                            message = f"Hey there! your desired stock {record[1]} is bought !"
-                            server.sendmail(sender_email , receiver_email , message)
-                            print("email has been sent to the receiver email !!")
-                            update_trigger(record[0])
-                            del record
-                            
-                            
-                    elif record[5] == 'biding_price': # it is biding_price
-                        if record[3] == int(data['biding_price']):
-                            print(f"the {data['symbolisin']} stock is bught in equal and biding_price!!!")
-                            record[4] = False
-                            message = f"Hey there! your desired stock {record[1]} is bought !"
-                            server.sendmail(sender_email , receiver_email , message)
-                            print("email has been sent to the receiver email !!")
-                            update_trigger(record[0])
-                            del record
-                            
-
+                    
+                    if record[3] == value:
+                        
+                        bole_f = True
+                       
                 elif record[2] == int(operator.greater_or_equal.value) :
-                    if record[5] == 'asking_price': # it is Asking_price
-                        if record[3] >= int(data['asking_price']):
-                            print(f"the {data['symbolisin']} stock is bught in greater_or_equal and asking_price!!!")
-                            record[4] = False
-                            message = f"Hey there! your desired stock {record[1]} is bought !"
-                            server.sendmail(sender_email , receiver_email , message)
-                            print("email has been sent to the receiver email !!")
-                            update_trigger(record[0])
-                            del record
-                            
-                            
-                    elif record[5] == 'biding_price': # it is biding_price
-                        if record[3] >= int(data['biding_price']):
-                            print(f"the {data['symbolisin']} stock is bught in greater_or_equal and biding_price!!!")
-                            record[4] = False
-                            message = f"Hey there! your desired stock {record[1]} is bought !"
-                            server.sendmail(sender_email , receiver_email , message)
-                            print("email has been sent to the receiver email !!")
-                            update_trigger(record[0])
-                            del record
-                            
-                            
-
+                    if record[3] >= value:
+                        
+                        bole_f = True
+                                                     
                 elif record[2] == int(operator.less_or_equal.value) :
-                    if record[5] == 'asking_price': # it is Asking_price
-                        if record[3] <= int(data['asking_price']):
-                            print(f"the {data['symbolisin']} stock is bught in less_or_equal and asking_price!!!")
-                            record[4] = False
-                            message = f"Hey there! your desired stock {record[1]} is bought !"
-                            server.sendmail(sender_email , receiver_email , message)
-                            print("email has been sent to the receiver email !!")
-                            update_trigger(record[0])
-                            del record
+                    if record[3] <= value:
+                        
+                        bole_f = True
                             
-                            
-                    elif record[5] == 'biding_price': # it is biding_price
-                        if record[3] <= int(data['biding_price']):
-                            print(f"the {data['symbolisin']} stock is bught in less_or_equal and biding_price!!!")
-                            record[4] = False
-                            message = f"Hey there! your desired stock {record[1]} is bought !"
-                            server.sendmail(sender_email , receiver_email , message)
-                            print("email has been sent to the receiver email !!")
-                            update_trigger(record[0])
-                            del record
-                            
-                            
-
                 elif record[2] == int(operator.greater.value) :
-                    if record[5] == 'asking_price': # it is Asking_price
-                        if record[3] > int(data['asking_price']):
-                            print(f"the {data['symbolisin']} stock is bught in greater and asking_price!!!")
-                            record[4] = False
-                            message = f"Hey there! your desired stock {record[1]} is bought !"
-                            server.sendmail(sender_email , receiver_email , message)
-                            print("email has been sent to the receiver email !!")
-                            update_trigger(record[0])
-                            del record
+                    if record[3] > value:
+                        
+                        bole_f = True
                             
-                            
-                    elif record[5] == 'biding_price': # it is biding_price
-                        if record[3] > int(data['biding_price']):
-                            print(f"the {data['symbolisin']} stock is bught in greater and biding_price!!!")
-                            record[4] = False
-                            message = f"Hey there! your desired stock {record[1]} is bought !"
-                            server.sendmail(sender_email , receiver_email , message)
-                            print("email has been sent to the receiver email !!")
-                            update_trigger(record[0])
-                            del record
-                            
-                            
-
                 elif record[2] == int(operator.less.value) :
-                    if record[5] == 'asking_price': # it is Asking_price
-                        if record[3] < int(data['asking_price']):
-                            print(f"the {data['symbolisin']} stock is bught in less and asking_price!!!")
-                            # del trigger_definition1
-                            update_trigger(record[0])
-                            record[4] = False
-                            message = f"Hey there! your desired stock {record[1]} is bought !"
-                            server.sendmail(sender_email , receiver_email , message)
-                            print("email has been sent to the receiver email !!")
-                            del record
-                            
-                            
-                    elif record[5] == 'biding_price': # it is biding_price
-                        if record[3] < int(data['biding_price']):
-                            print(f"the {data['symbolisin']} stock is bught in less and biding_price!!!")
-                            update_trigger(record[0])
-                            record[4] = False
-                            message = f"Hey there! your desired stock {record[1]} is bought !"
-                            server.sendmail(sender_email , receiver_email , message)
-                            print("email has been sent to the receiver email !!")
-                            del record
-                            
-                            
-            
+                    if record[3] < value:
+                        
+                        bole_f = True                         
+                                      
                 else:
                     print("something is wrong...")
             else: 
                 print("this stock is not matter! :| ")
         else:
             print("there is no trigger!!! ")
+        if bole_f == True :
+            run_action(record , data )
+            # sending_email.email_service(record)
+            publish("adding_live_data", record)
 
 
  

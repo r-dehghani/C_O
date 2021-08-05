@@ -64,3 +64,23 @@ services:
             - db
             - rabbitmq
             - api
+    action_connsumer:
+        build: 
+            context: "./Trigger"
+            dockerfile: Dockerfile
+        restart: always
+        command: "python sending_email.py"
+        depends_on: 
+            - db
+            - rabbitmq
+            - api
+            - trigger
+    scheduled_worker:
+        build: 
+            context: "./scheduled_worker"
+            dockerfile: Dockerfile
+        restart: always
+        command: "python scheduled_worker.py"
+        depends_on: 
+            - db
+            

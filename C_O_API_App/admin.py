@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import indexes , trigger , make_deal
+from .models import indexes , trigger
 
 class AdminMode(admin.ModelAdmin):
     list_display = ["symbolisin", "yesterday_variation", "asking_price" , "biding_price" ,"opening_price"]
