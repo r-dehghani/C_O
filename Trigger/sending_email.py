@@ -9,7 +9,7 @@ print("this is two")
 channel = connection.channel()
 
 channel.exchange_declare(exchange='another_exchange', exchange_type='fanout')
-channel.queue_declare(queue='email' , exclusive=True)
+channel.queue_declare(queue='email' , exclusive=False)
 channel.queue_bind(exchange='another_exchange', queue="email")
 
 

@@ -28,7 +28,7 @@ parameters = pika.ConnectionParameters('rabbitmq', 5672 , '/' , credentials , he
 connection = pika.BlockingConnection(parameters)
 channel = connection.channel()
 channel.exchange_declare(exchange='logs', exchange_type='fanout')
-channel.queue_declare(queue='hello2' , exclusive=True)
+channel.queue_declare(queue='hello2' , exclusive=False)
 channel.queue_bind(exchange='logs', queue="hello2")
 # =========================================================
 
